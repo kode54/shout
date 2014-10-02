@@ -5,15 +5,20 @@
 	</span>
 	<span class="from">
 		{{#if from}}
-		<button class="user">{{from}}</button>
+		<button class="user" style="color: #{{stringcolor from}}">{{from}}</button>
 		{{/if}}
 	</span>
 	<span class="text">
 		<em class="type">{{type}}</em>
-		{{#equal type "image"}}
-		<img src="{{text}}" class="image">
+		{{#equal type "toggle"}}
+			<div class="force-newline">
+				<button id="toggle-{{id}}" class="toggle-button">···</button>
+			</div>
+			{{#if toggle}}
+				{{partial "toggle"}}
+			{{/if}}
 		{{else}}
-		{{{uri text}}}
+			{{{parse text}}}
 		{{/equal}}
 	</span>
 </div>

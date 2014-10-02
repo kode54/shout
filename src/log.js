@@ -1,8 +1,8 @@
-var config = require("../config");
 var fs = require("fs");
 var mkdirp = require("mkdirp");
 var moment = require("moment");
 var Helper = require("./helper");
+var config = Helper.getConfig();
 
 module.exports = {
 	write: function(user, network, chan, msg) {
@@ -19,7 +19,8 @@ module.exports = {
 		var time = moment().zone(tz).format(format);
 		var line = "[" + time + "] ";
 
-		if (msg.type == "message") {
+		var type = msg.type.trim();
+		if (type == "message" || type == "highlight") {
 			// Format:
 			// [2014-01-01 00:00:00] <Arnold> Put that cookie down.. Now!!
 			line += "<" + msg.from + "> " + msg.text;
@@ -32,13 +33,14 @@ module.exports = {
 			}
 		}
 
-		try {
-			fs.appendFile(
-				path + "/" + chan + ".log",
-				line + "\n"
-			);
-		} catch(e) {
-			return;
-		}
+		fs.appendFile(
+			path + "/" + chan + ".log",
+			line + "\n",
+			function(e) {
+				if (e) {
+					console.log("Log#write():\n" + e)
+				}
+			}
+		);
 	}
 };

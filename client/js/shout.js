@@ -199,9 +199,7 @@ $(function() {
 			.prepend(render("msg", {messages: data.messages}))
 			.end();
 		if (data.messages.length != 100) {
-			var more = chan
-				.find(".show-more")
-				.addClass("hidden");
+			chan.find(".show-more").removeClass("show");
 		}
 	});
 
@@ -276,6 +274,24 @@ $(function() {
 		}
 	});
 
+	socket.on("toggle", function(data) {
+		var toggle = $("#toggle-" + data.id);
+		toggle.parent().after(render("toggle", {toggle: data}));
+		switch (data.type) {
+		case "link":
+			if (options.links) {
+				toggle.click();
+			}
+			break;
+
+		case "image":
+			if (options.thumbnails) {
+				toggle.click();
+			}
+			break;
+		}
+	});
+
 	socket.on("users", function(data) {
 		var users = chat.find("#chan-" + data.chan)
 			.find(".users")
@@ -287,12 +303,15 @@ $(function() {
 	var settings = $("#settings");
 	var options = $.extend({
 		badge: false,
+		colors: false,
 		join: true,
+		links: true,
 		mode: true,
 		motd: false,
 		nick: true,
 		notification: true,
 		part: true,
+		thumbnails: true,
 		quit: true,
 	}, $.cookie("settings"));
 
@@ -321,6 +340,9 @@ $(function() {
 			"quit",
 		].indexOf(name) !== -1) {
 			chat.toggleClass("hide-" + name, !self.prop("checked"));
+		}
+		if (name == "colors") {
+			chat.toggleClass("no-colors", !self.prop("checked"));
 		}
 	}).find("input")
 		.trigger("change");
@@ -362,18 +384,26 @@ $(function() {
 			clear();
 			return;
 		}
-		submit.removeClass("enabled");
 		socket.emit("input", {
 			target: chat.data("id"),
 			text: text
 		});
 	});
 
-	form.on("input", "#input", function() {
-		submit.toggleClass("enabled", $(this).val() != "");
+	chat.on("click", ".messages", function() {
+		setTimeout(function() {
+			var text = "";
+			if (window.getSelection) {
+				text = window.getSelection().toString();
+			} else if (document.selection && document.selection.type != "Control") {
+				text = document.selection.createRange().text;
+			}
+			if (!text) {
+				focus();
+			}
+		}, 2);
 	});
 
-	chat.on("click", ".messages", focus);
 	$(window).on("focus", focus);
 
 	function focus() {
@@ -478,7 +508,7 @@ $(function() {
 
 	var whois = false;
 	chat.on("click", ".user", function() {
-		var user = $(this).html().trim().replace(/[+%@~]/, "");
+		var user = $(this).text().trim().replace(/[+%@~&]/, "");
 		if (user.indexOf("#") !== -1) {
 			return;
 		}
@@ -554,14 +584,32 @@ $(function() {
 		}
 	});
 
-	chat.on("click", ".show-more", function() {
+	chat.on("click", ".show-more-button", function() {
 		var self = $(this);
-		var id = self.data("id");
-		var count = self.next(".messages").children().length;
+		var count = self.parent().next(".messages").children().length;
 		socket.emit("more", {
-			target: id,
+			target: self.data("id"),
 			count: count
 		});
+	});
+
+	chat.on("click", ".toggle-button", function() {
+		var self = $(this);
+		var chat = self.closest(".chat");
+		var bottom = chat.isScrollBottom();
+		var content = self.parent().next(".toggle-content");
+		if (bottom && !content.hasClass("show")) {
+			var img = content.find("img");
+			if (img.length != 0 && !img.width()) {
+				img.on("load", function() {
+					chat.scrollBottom();
+				});
+			}
+		}
+		content.toggleClass("show");
+		if (bottom) {
+			chat.scrollBottom();
+		}
 	});
 
 	var windows = $("#windows");
@@ -624,13 +672,13 @@ $(function() {
 		var direction = keys.split("+").pop();
 		switch (direction) {
 		case "up":
-			// Wrap around!
+			// Loop
 			var upTarget = (channels.length + (index - 1 + channels.length)) % channels.length;
 			channels.eq(upTarget).click();
 			break;
 
 		case "down":
-			// Wrap aroud!
+			// Loop
 			var downTarget = (channels.length + (index + 1 + channels.length)) % channels.length;
 			channels.eq(downTarget).click();
 			break;
@@ -655,8 +703,7 @@ $(function() {
 	function complete(word) {
 		var words = commands.slice();
 		var users = chat.find(".active")
-			.find(".names")
-			.children()
+			.find(".names .user")
 			.each(function() {
 				words.push($(this).text().replace(/[+%@~]/, ""));
 			});
@@ -743,7 +790,7 @@ $(function() {
 			.html(nick + ":")
 			.width();
 		if (width) {
-			width += 34;
+			width += 31;
 			input.css("padding-left", width);
 		}
 	}

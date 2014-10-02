@@ -5,6 +5,11 @@ var Msg = require("../../models/msg");
 module.exports = function(irc, network) {
 	var client = this;
 	irc.on("message", function(data) {
+		if (data.message.indexOf("\u0001") === 0 && data.message.substring(0, 7) != "\u0001ACTION") {
+			// Hide ctcp messages.
+			return;
+		}
+
 		var target = data.to;
 		if (target.toLowerCase() == irc.me.toLowerCase()) {
 			target = data.from;
@@ -27,7 +32,7 @@ module.exports = function(irc, network) {
 		var text = data.message;
 		if (text.split(" ")[0] === "\u0001ACTION") {
 			type = Msg.Type.ACTION;
-			text = text.replace(/\u0001|ACTION/g, "");
+			text = text.replace(/^\u0001ACTION|\u0001$/g, "");
 		}
 
 		text.split(" ").forEach(function(w) {

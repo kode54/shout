@@ -2,11 +2,11 @@ var _ = require("lodash");
 var bcrypt = require("bcrypt");
 var Client = require("./client");
 var ClientManager = require("./clientManager");
-var config = require("../config");
+var express = require("express");
 var fs = require("fs");
-var http = require("connect");
 var io = require("socket.io");
 var Helper = require("./helper");
+var config = Helper.getConfig();
 
 var sockets = null;
 var manager = new ClientManager();
@@ -16,13 +16,27 @@ module.exports = function(port, host, isPublic) {
 	config.host = host;
 	config.public = isPublic;
 
-	var app = http()
+	var app = express()
 		.use(index)
-		.use(http.static("client"))
-		.use(http.static(Helper.resolveHomePath("cache")))
-		.listen(config.port, config.host);
+		.use(express.static("client"))
+		.use(express.static(Helper.resolveHomePath("cache")));
 
-	sockets = io(app);
+	var server = null;
+	var https = config.https || {};
+	var protocol = https.enable ? "https" : "http";
+
+	if (!https.enable){
+		server = require("http");
+		server = server.createServer(app).listen(port, host);
+	} else {
+		server = require("https");
+		server = server.createServer({
+			key: fs.readFileSync(https.key),
+			cert: fs.readFileSync(https.certificate)
+		}, app).listen(port, host)
+	}
+
+	sockets = io(server);
 	sockets.on("connect", function(socket) {
 		if (config.public) {
 			auth.call(socket);
@@ -34,7 +48,7 @@ module.exports = function(port, host, isPublic) {
 	manager.sockets = sockets;
 
 	console.log("");
-	console.log("Shout is now running on http://" + config.host + ":" + config.port + "/");
+	console.log("Shout is now running on " + protocol + "://" + config.host + ":" + config.port + "/");
 	console.log("Press ctrl-c to stop");
 	console.log("");
 

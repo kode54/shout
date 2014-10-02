@@ -3,10 +3,9 @@
 	<head>
 
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, user-scalable=no, minimal-ui">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="mobile-web-app-capable" content="yes">
 
 	<title>Shout</title>
 
@@ -15,7 +14,8 @@
 	<link id="theme" rel="stylesheet" href="<%= theme %>">
 
 	<link rel="shortcut icon" href="/img/favicon.png">
-	<link href="/img/apple-touch-icon-120x120.png" rel="apple-touch-icon" sizes="120x120">
+	<link rel="icon" sizes="192x192" href="/img/touch-icon-192x192.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/img/apple-touch-icon-120x120.png">
 
 	</head>
 	<body class="<%= public ? "public" : "" %>">
@@ -38,7 +38,7 @@
 		</footer>
 		<div id="main">
 			<div id="windows">
-				<div id="chat"></div>
+				<div id="chat" class="no-colors"></div>
 				<div id="sign-in" class="window">
 					<div class="header">
 						<button class="lt"></button>
@@ -201,6 +201,30 @@
 								</label>
 							</div>
 							<div class="col-sm-12">
+								<h2>Visual Aids</h2>
+							</div>
+							<div class="col-sm-12">
+								<label class="opt">
+									<input type="checkbox" name="colors">
+									Enable colored nicknames
+								</label>
+							</div>
+							<div class="col-sm-12">
+								<h2>Links and URLs</h2>
+							</div>
+							<div class="col-sm-6">
+								<label class="opt">
+									<input type="checkbox" name="thumbnails">
+									Auto-expand thumbnails
+								</label>
+							</div>
+							<div class="col-sm-6">
+								<label class="opt">
+									<input type="checkbox" name="links">
+									Auto-expand links
+								</label>
+							</div>
+							<div class="col-sm-12">
 								<h2>Notifications</h2>
 							</div>
 							<div class="col-sm-12">
@@ -248,29 +272,7 @@
 	</div>
 	</div>
 
-	<% if (debug) { %>
-	<script src="js/libs/favico.js"></script>
-	<script src="js/libs/handlebars.js"></script>
-	<script src="js/libs/handlebars/equal.js"></script>
-	<script src="js/libs/handlebars/tz.js"></script>
-	<script src="js/libs/handlebars/uri.js"></script>
-	<script src="js/libs/handlebars/users.js"></script>
-	<script src="js/libs/jquery.js"></script>
-	<script src="js/libs/jquery/bootstrap.js"></script>
-	<script src="js/libs/jquery/cookie.js"></script>
-	<script src="js/libs/jquery/inputhistory.js"></script>
-	<script src="js/libs/jquery/mousetrap.js"></script>
-	<script src="js/libs/jquery/stickyscroll.js"></script>
-	<script src="js/libs/jquery/tabcomplete.js"></script>
-	<script src="js/libs/moment.js"></script>
-	<script src="js/libs/notification.js"></script>
-	<script src="js/libs/socket.io.js"></script>
-	<script src="js/libs/string.contains.js"></script>
-	<script src="js/libs/uri.js"></script>
-	<% } else { %>
 	<script src="js/libs.min.js"></script>
-	<% } %>
-
 	<script src="js/shout.templates.js"></script>
 	<script src="js/shout.js"></script>
 

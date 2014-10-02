@@ -1,5 +1,4 @@
 var _ = require("lodash");
-var config = require("../config");
 var Chan = require("./models/chan");
 var crypto = require("crypto");
 var log = require("./log");
@@ -8,6 +7,8 @@ var Msg = require("./models/msg");
 var Network = require("./models/network");
 var slate = require("slate-irc");
 var tls = require("tls");
+var Helper = require("./helper");
+var config = Helper.getConfig();
 
 module.exports = Client;
 
@@ -15,12 +16,12 @@ var id = 0;
 var events = [
 	"ctcp",
 	"error",
-	"image",
 	"join",
 	"kick",
 	"mode",
 	"motd",
 	"message",
+	"link",
 	"names",
 	"nick",
 	"notice",
@@ -200,7 +201,7 @@ Client.prototype.connect = function(args) {
 
 Client.prototype.input = function(data) {
 	var client = this;
-	var text = data.text;
+	var text = data.text.trim();
 	var target = client.find(data.target);
 	if (text.charAt(0) !== "/") {
 		text = "/say " + text;
@@ -283,9 +284,14 @@ Client.prototype.sort = function(data) {
 };
 
 Client.prototype.quit = function() {
-	this.sockets.in(this.id).sockets.forEach(function(socket) {
-		socket.disconnect(true);
-	});
+	var sockets = this.sockets.sockets;
+	var room = sockets.adapter.rooms[this.id] || [];
+	for (var user in room) {
+		var socket = sockets.adapter.nsp.connected[user];
+		if (socket) {
+			socket.disconnect();
+		}
+	}
 	this.networks.forEach(function(network) {
 		var irc = network.irc;
 		if (network.connected) {

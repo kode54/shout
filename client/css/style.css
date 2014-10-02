@@ -190,27 +190,27 @@ button {
 }
 #sidebar .chan:before,
 #chat .title:before {
-		font: 14px FontAwesome;
-		float: left;
-		margin-top: 3px;
-		margin-right: 12px;
-		width: 14px;
-		text-align: center;
+	font: 14px FontAwesome;
+	float: left;
+	margin-top: 3px;
+	margin-right: 12px;
+	width: 14px;
+	text-align: center;
 }
 #chat .title:before {
-		margin-top: 17px;
+	margin-top: 17px;
 }
 #sidebar .chan.lobby:before,
 #chat .lobby .title:before {
-		content: "\f0a0";
+	content: "\f0a0";
 }
 #sidebar .chan.query:before,
 #chat .query .title:before {
-		content: "\f0e6";
+	content: "\f0e6";
 }
 #sidebar .chan.channel:before,
 #chat .channel .title:before {
-		content: "\f0f6";
+	content: "\f0f6";
 }
 #sidebar .chan:hover .badge {
 	opacity: 0;
@@ -397,7 +397,7 @@ button {
 	padding: 0 20px;
 }
 #windows .header .title {
-	font: 16px Lato;
+	font: 14px Lato;
 }
 #windows .header .topic {
 	/* Hidden for now */
@@ -422,6 +422,9 @@ button {
 	height: 25px;
 	line-height: 0;
 	padding: 0 10px;
+}
+#windows .header .button:hover {
+	opacity: 1;
 }
 #windows .window .header {
 	display: none;
@@ -470,15 +473,30 @@ button {
 	display: none;
 }
 #chat .show-more {
-	background: #fff;
-	border-bottom: 1px solid #e7e7e7;
-	color: #b1c3ce;
-	height: 48px;
-	line-height: 50px;
+	display: none;
+	padding: 10px;
 	position: absolute;
 	width: 100%;
 }
-#chat .show-more:hover {
+#chat .show-more.show + .messages .msg:first-child {
+	padding-top: 47px !important;
+}
+#chat .show-more.show + .messages .msg:first-child > span {
+	padding-top: 52px !important;
+}
+#chat .show-more-button {
+	background: #f4f4f4;
+	background-image: linear-gradient(#f4f4f4, #ececec);
+	border: 1px solid #d7d7d7;
+	border-bottom-color: #b7b7b7;
+	border-radius: 2px;
+	color: #555;
+	font: 12px Lato, sans-serif;
+	height: 34px;
+	line-height: 0;
+	width: 100%;
+}
+#chat .show-more-button:hover {
 	opacity: 1;
 }
 #chat .messages {
@@ -500,8 +518,9 @@ button {
 	padding-bottom: 10px;
 }
 #chat .msg .type {
-	color: #ddd;
+	color: #ccc;
 	display: none;
+	font-style: normal;
 }
 #chat .time,
 #chat .from,
@@ -524,17 +543,22 @@ button {
 	width: 134px;
 	min-width: 134px;
 }
-#chat a,
-#chat .from button,
-#chat .sidebar button {
+#chat a {
 	color: #84ce88;
+}
+#chat.no-colors .from button,
+#chat.no-colors .sidebar button {
+	color: #84ce88 !important;
 }
 #chat .text {
 	padding-left: 10px;
 	padding-right: 6px;
 }
+#chat .wrap,
 #chat .text a {
+	font-style: normal;
 	word-break: break-all;
+	word-wrap: break-word;
 }
 #chat .self .text {
 	color: #999;
@@ -571,11 +595,47 @@ button {
 	color: #f39c12;
 }
 #chat .action .user:before {
-	content: '* ';
+	content: "* ";
 }
-#chat .image {
-	max-height: 120px;
-	max-width: 240px;
+#chat .action .user:after {
+	content: "";
+}
+#chat .toggle-button {
+	background: #f5f5f5;
+	border-radius: 2px;
+	display: inline-block;
+	color: #666;
+	height: 1em;
+	line-height: 0px;
+	padding: 0px 6px;
+}
+#chat .toggle-content {
+	background: #f5f5f5;
+	border-radius: 2px;
+	display: none;
+	color: #222;
+	font: 12px Lato;
+	max-width: 100%;
+	padding: 6px 8px;
+	margin-top: 2px;
+}
+#chat .toggle-content a {
+	color: inherit;
+}
+#chat .toggle-content img {
+	max-width: 100%;
+	max-height: 100%;
+	display: block;
+	margin: 2px 0;
+}
+#chat .toggle-content .head {
+	font-weight: bold;
+}
+#chat .toggle-content .body {
+	color: #999;
+}
+#chat .toggle-content.show {
+	display: inline-block !important;
 }
 #chat .count {
 	background: #fafafa;
@@ -618,6 +678,9 @@ button {
 #chat .names button {
 	display: block;
 	line-height: 1.6;
+}
+#chat .names .inner {
+	width: 300px;
 }
 #sign-in label {
 	display: block;
@@ -675,7 +738,7 @@ button {
 }
 #settings .opt {
 	display: block;
-	padding: 10px 0 10px 1px;
+	padding: 5px 0 10px 1px;
 }
 #settings .opt input {
 	float: left;
@@ -703,14 +766,15 @@ button {
 }
 #form {
 	background: #e4eaee;
+	background: #eee;
 	border-top: 1px solid #cfdae1;
+	border-top: 1px solid #ddd;
 	bottom: 0;
 	height: 48px;
 	left: 0;
 	position: absolute;
 	right: 0px;
 }
-
 #form .inner {
 	bottom: 7px;
 	left: 7px;
@@ -722,19 +786,19 @@ button {
 	font: 12px Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace;
 	left: 0;
 	height: 34px;
-	margin-right: 60px;
+	margin-right: 64px;
 	position: relative;
 }
 #form #nick {
 	background: #f6f6f6;
-	color: #aaa;
+	color: #666;
 	position: absolute;
 	font: inherit;
 	font-size: 11px;
 	margin: 5px;
 	line-height: 26px;
 	height: 24px;
-	padding: 0 10px;
+	padding: 0 9px;
 	border-radius: 1px;
 	-webkit-user-select: none;
 	   -moz-user-select: none;
@@ -743,6 +807,7 @@ button {
 }
 #form #input {
 	border: 1px solid #cfdae1;
+	border: 1px solid #ddd;
 	font: inherit;
 	border-radius: 2px;
 	height: 100%;
@@ -760,14 +825,10 @@ button {
 	font: 12px Lato, sans-serif;
 	color: #555;
 	height: 34px;
-	opacity: .5;
 	position: absolute;
 	right: 0;
 	transition: opacity .3s;
-	width: 54px;
-}
-#form #submit.enabled {
-	opacity: 1;
+	width: 58px;
 }
 
 /**

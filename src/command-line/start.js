@@ -1,7 +1,8 @@
-var config = require("../../config");
 var ClientManager = new require("../clientManager");
 var program = require("commander");
 var shout = require("../server");
+var Helper = require("../helper");
+var config = Helper.getConfig();
 
 program
 	.option("-H, --host <ip>", "host")
@@ -12,7 +13,13 @@ program
 	.description("Start the server")
 	.action(function() {
 		var users = new ClientManager().getUsers();
-		if (!config.public && !users.length) {
+		var mode = config.public;
+		if (program.public) {
+			mode = true;
+		} else if (program.private) {
+			mode = false;
+		}
+		if (!mode && !users.length) {
 			console.log("");
 			console.log("No users found!");
 			console.log("Create a new user with 'shout add <name>'.");
@@ -20,12 +27,6 @@ program
 		} else {
 			var host = program.host || process.env.IP || config.host;
 			var port = program.port || process.env.PORT || config.port;
-			var mode = config.public;
-			if (program.public) {
-				mode = true;
-			} else if (program.private) {
-				mode = false;
-			}
 			shout(port, host, mode);
 		}
 	});

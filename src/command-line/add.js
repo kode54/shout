@@ -1,5 +1,5 @@
 var ClientManager = new require("../clientManager");
-var bcrypt = require("bcrypt");
+var bcrypt = require("bcrypt-nodejs");
 var fs = require("fs");
 var program = require("commander");
 var mkdirp = require("mkdirp");
@@ -9,7 +9,7 @@ program
 	.command("add <name> [<password>]")
 	.description("Add a new user")
 	.action(function(name, password) {
-		var path = Helper.resolveHomePath("users");
+		var path = Helper.HOME + "/users";
 		try {
 			mkdirp.sync(path);
 		} catch (e) {
@@ -52,12 +52,13 @@ program
 
 function add(manager, name, password) {
 	console.log("");
-	var hash = bcrypt.hashSync(password, 8);
+	var salt = bcrypt.genSaltSync(8);
+	var hash = bcrypt.hashSync(password, salt);
 	manager.addUser(
 		name,
 		hash
 	);
 	console.log("User '" + name + "' created:");
-	console.log(Helper.resolveHomePath("users", name, "user.json"));
+	console.log(Helper.HOME + "/users/" + name + "/user.json");
 	console.log("");
 }
